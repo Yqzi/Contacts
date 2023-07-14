@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screen.dart';
 
 void main() {
   runApp(const Contacts());
@@ -10,6 +11,8 @@ class Contacts extends StatefulWidget {
   @override
   State<Contacts> createState() => _ContactsState();
 }
+
+bool swapScreens = false;
 
 class _ContactsState extends State<Contacts> {
   @override
@@ -29,9 +32,13 @@ class _ContactsState extends State<Contacts> {
                 ),
               ),
               TextButton(
-                onPressed: null,
-                child: const Text(
-                  '+',
+                onPressed: () {
+                  setState(() {
+                    swapScreens = !swapScreens;
+                  });
+                },
+                child: Text(
+                  (swapScreens) ? "x" : '+',
                   style: TextStyle(fontSize: 30),
                 ),
               ),
@@ -53,9 +60,7 @@ class _ContactsState extends State<Contacts> {
                 },
               ),
             ),
-            Container(
-              child: Text('lelele'),
-            )
+            if (swapScreens) const NextScreen(),
           ],
         ),
       ),
