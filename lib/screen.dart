@@ -1,7 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:contacts/button.dart';
 
 class NextScreen extends StatefulWidget {
   const NextScreen({super.key});
@@ -15,10 +15,18 @@ class _NextScreenState extends State<NextScreen> {
   ImagePicker picker = ImagePicker();
   Uint8List? imageBytes;
 
+  TextEditingController controller = TextEditingController();
+
   void imagePicker() async {
     XFile? _image = await picker.pickImage(source: ImageSource.gallery);
     imageBytes = await _image?.readAsBytes();
     setState(() {});
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -31,33 +39,15 @@ class _NextScreenState extends State<NextScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextButton(onPressed: null, child: Text('cancel')),
-                  Text('New Contact'),
-                  TextButton(onPressed: null, child: Text('done'))
+                  TextButton(onPressed: () {}, child: const Text('done')),
+                  const Text('New Contact'),
+                  const TextButton(onPressed: null, child: Text('cancel'))
                 ],
               ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(50),
-                child: MaterialButton(
-                  onPressed: imagePicker,
-                  child: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: imageBytes == null
-                        ? const Icon(
-                            Icons.account_circle,
-                            size: 100,
-                          )
-                        : Image.memory(
-                            imageBytes!,
-                            fit: BoxFit.cover,
-                          ),
-                  ),
-                ),
-              ),
+              ProfileImage(pick: imagePicker, bytes: imageBytes),
               TextButton(onPressed: imagePicker, child: Text('Add Photo')),
             ],
           ),
@@ -89,10 +79,24 @@ class _NextScreenState extends State<NextScreen> {
               ),
               Container(
                 color: Colors.white,
-                child: const TextField(
+                child: TextField(
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    LengthLimitingTextInputFormatter(10),
+                  ],
+                  controller: controller,
+                  onSubmitted: (num) {
+                    num = num.substring(0, 3) +
+                        '-' +
+                        num.substring(3, 6) +
+                        '-' +
+                        num.substring(6, 10);
+                    controller.text = num;
+                  },
                   textAlign: TextAlign.left,
-                  decoration: InputDecoration(
-                      hintText: 'add phone',
+                  decoration: const InputDecoration(
+                      labelText: 'Phone #',
                       contentPadding: EdgeInsets.all(15.0)),
                 ),
               ),
