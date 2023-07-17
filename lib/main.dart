@@ -12,9 +12,15 @@ class Contacts extends StatefulWidget {
   State<Contacts> createState() => _ContactsState();
 }
 
-bool swapScreens = false;
-
 class _ContactsState extends State<Contacts> {
+  bool swapScreens = false;
+
+  void changeS() {
+    setState(() {
+      swapScreens = !swapScreens;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,22 +30,18 @@ class _ContactsState extends State<Contacts> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              TextButton(
+              const TextButton(
                 onPressed: null,
-                child: const Text(
+                child: Text(
                   '< List',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
               TextButton(
-                onPressed: () {
-                  setState(() {
-                    swapScreens = !swapScreens;
-                  });
-                },
+                onPressed: changeS,
                 child: Text(
                   (swapScreens) ? "x" : '+',
-                  style: TextStyle(fontSize: 30),
+                  style: const TextStyle(fontSize: 30),
                 ),
               ),
             ],
@@ -47,20 +49,18 @@ class _ContactsState extends State<Contacts> {
         ),
         body: Stack(
           children: [
-            Container(
-              child: ListView.separated(
-                itemCount: 25,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text('Item $index'),
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return Divider();
-                },
-              ),
+            ListView.separated(
+              itemCount: 25,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text('Item $index'),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return const Divider();
+              },
             ),
-            if (swapScreens) const NextScreen(),
+            if (swapScreens) NextScreen(onSubmitted: changeS),
           ],
         ),
       ),

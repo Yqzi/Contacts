@@ -4,14 +4,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:contacts/button.dart';
 
 class NextScreen extends StatefulWidget {
-  const NextScreen({super.key});
+  final void Function() onSubmitted;
+  const NextScreen({super.key, required this.onSubmitted});
 
   @override
   State<NextScreen> createState() => _NextScreenState();
 }
 
 class _NextScreenState extends State<NextScreen> {
-  // void openGallery() async {
   ImagePicker picker = ImagePicker();
   Uint8List? imageBytes;
 
@@ -42,9 +42,10 @@ class _NextScreenState extends State<NextScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextButton(onPressed: () {}, child: const Text('done')),
-                  const Text('New Contact'),
-                  const TextButton(onPressed: null, child: Text('cancel'))
+                  TextButton(
+                      onPressed: widget.onSubmitted, child: const Text('done')),
+                  Text('New Contact'),
+                  TextButton(onPressed: null, child: Text('cancel'))
                 ],
               ),
               ProfileImage(pick: imagePicker, bytes: imageBytes),
