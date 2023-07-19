@@ -61,7 +61,7 @@ class _ContactsState extends State<Contacts> {
               itemCount: Names.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
-                  title: Text("${Names[-1]}"),
+                  title: Text(Names[index]),
                 );
               },
               separatorBuilder: (BuildContext context, int index) {

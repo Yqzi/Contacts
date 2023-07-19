@@ -118,10 +118,3 @@ class _NextScreenState extends State<NextScreen> {
     );
   }
 }
-
-class Names {
-  String fn;
-  String ln;
-
-  Names({required this.fn, required this.ln});
-}
