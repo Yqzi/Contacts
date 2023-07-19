@@ -15,8 +15,12 @@ class Contacts extends StatefulWidget {
 class _ContactsState extends State<Contacts> {
   bool swapScreens = false;
 
-  void changeS() {
+  List<String> Names = [];
+
+  void changeS(String fn, String ln) {
     setState(() {
+      Names.add(fn + " " + ln);
+      print(Names[0]);
       swapScreens = !swapScreens;
     });
   }
@@ -38,7 +42,11 @@ class _ContactsState extends State<Contacts> {
                 ),
               ),
               TextButton(
-                onPressed: changeS,
+                onPressed: () {
+                  setState(() {
+                    swapScreens = !swapScreens;
+                  });
+                },
                 child: Text(
                   (swapScreens) ? "x" : '+',
                   style: const TextStyle(fontSize: 30),
@@ -50,10 +58,10 @@ class _ContactsState extends State<Contacts> {
         body: Stack(
           children: [
             ListView.separated(
-              itemCount: 25,
+              itemCount: Names.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
-                  title: Text('Item $index'),
+                  title: Text("${Names[-1]}"),
                 );
               },
               separatorBuilder: (BuildContext context, int index) {

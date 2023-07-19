@@ -4,7 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:contacts/button.dart';
 
 class NextScreen extends StatefulWidget {
-  final void Function() onSubmitted;
+  final void Function(String, String) onSubmitted;
   const NextScreen({super.key, required this.onSubmitted});
 
   @override
@@ -16,6 +16,8 @@ class _NextScreenState extends State<NextScreen> {
   Uint8List? imageBytes;
 
   TextEditingController controller = TextEditingController();
+  TextEditingController fnc = TextEditingController();
+  TextEditingController lnc = TextEditingController();
 
   void imagePicker() async {
     XFile? _image = await picker.pickImage(source: ImageSource.gallery);
@@ -43,7 +45,13 @@ class _NextScreenState extends State<NextScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
-                      onPressed: widget.onSubmitted, child: const Text('done')),
+                      onPressed: () {
+                        widget.onSubmitted(
+                          fnc.text,
+                          lnc.text,
+                        );
+                      },
+                      child: const Text('done')),
                   Text('New Contact'),
                   TextButton(onPressed: null, child: Text('cancel'))
                 ],
@@ -61,17 +69,19 @@ class _NextScreenState extends State<NextScreen> {
             children: [
               Container(
                 color: Colors.white,
-                child: const Column(
+                child: Column(
                   children: [
                     TextField(
+                      controller: fnc,
                       textAlign: TextAlign.left,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           hintText: 'First Name',
                           contentPadding: EdgeInsets.all(15.0)),
                     ),
                     TextField(
+                      controller: lnc,
                       textAlign: TextAlign.left,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           hintText: 'Last Name',
                           contentPadding: EdgeInsets.all(15.0)),
                     ),
@@ -107,4 +117,11 @@ class _NextScreenState extends State<NextScreen> {
       ],
     );
   }
+}
+
+class Names {
+  String fn;
+  String ln;
+
+  Names({required this.fn, required this.ln});
 }
