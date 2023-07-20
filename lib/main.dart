@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'screen.dart';
 
@@ -15,12 +16,11 @@ class Contacts extends StatefulWidget {
 class _ContactsState extends State<Contacts> {
   bool swapScreens = false;
 
-  List<String> Names = [];
+  List<Contact> contacts = [];
 
-  void changeS(String fn, String ln) {
+  void changeS(String fn, String ln, String pNumber, {String? imgPath}) {
     setState(() {
-      Names.add(fn + " " + ln);
-      print(Names[0]);
+      contacts.add(Contact(fn, ln, pNumber, imgPath: imgPath));
       swapScreens = !swapScreens;
     });
   }
@@ -58,10 +58,11 @@ class _ContactsState extends State<Contacts> {
         body: Stack(
           children: [
             ListView.separated(
-              itemCount: Names.length,
+              itemCount: contacts.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
-                  title: Text(Names[index]),
+                  title: Text(contacts[index].fullname),
+                  onTap: () => print(contacts[index].number),
                 );
               },
               separatorBuilder: (BuildContext context, int index) {
@@ -74,4 +75,15 @@ class _ContactsState extends State<Contacts> {
       ),
     );
   }
+}
+
+class Contact {
+  final String? imgPath;
+  final String firstName;
+  final String lastName;
+  final String number;
+
+  Contact(this.firstName, this.lastName, this.number, {this.imgPath});
+
+  String get fullname => "$firstName $lastName";
 }

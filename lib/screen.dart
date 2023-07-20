@@ -1,10 +1,13 @@
+import 'dart:io';
+import 'package:contacts/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:contacts/button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NextScreen extends StatefulWidget {
-  final void Function(String, String) onSubmitted;
+  final void Function(String, String, String, {String? imgPath}) onSubmitted;
   const NextScreen({super.key, required this.onSubmitted});
 
   @override
@@ -14,6 +17,7 @@ class NextScreen extends StatefulWidget {
 class _NextScreenState extends State<NextScreen> {
   ImagePicker picker = ImagePicker();
   Uint8List? imageBytes;
+  String? imagePath;
 
   TextEditingController controller = TextEditingController();
   TextEditingController fnc = TextEditingController();
@@ -22,8 +26,14 @@ class _NextScreenState extends State<NextScreen> {
   void imagePicker() async {
     XFile? _image = await picker.pickImage(source: ImageSource.gallery);
     imageBytes = await _image?.readAsBytes();
+    imagePath = _image?.path;
     setState(() {});
   }
+
+  // void saveImg(path) async {
+  //   SharedPreferences saveImage = await SharedPreferences.getInstance();
+  //   saveImage.setString("imagepath", path);
+  // }
 
   @override
   void dispose() {
@@ -49,6 +59,8 @@ class _NextScreenState extends State<NextScreen> {
                         widget.onSubmitted(
                           fnc.text,
                           lnc.text,
+                          controller.text,
+                          imgPath: imagePath,
                         );
                       },
                       child: const Text('done')),
