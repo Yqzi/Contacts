@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'screen.dart';
 
@@ -17,10 +16,21 @@ class _ContactsState extends State<Contacts> {
   bool swapScreens = false;
 
   List<Contact> contacts = [];
+  Contact? currentContact;
 
-  void changeS(String fn, String ln, String pNumber, {String? imgPath}) {
+  void createContact(String fn, String ln, String pNumber, {String? imgPath}) {
     setState(() {
       contacts.add(Contact(fn, ln, pNumber, imgPath: imgPath));
+      swapScreens = !swapScreens;
+    });
+  }
+
+  void editContact(String fn, String ln, String pNumber, {String? imgPath}) {
+    setState(() {
+      currentContact!.firstName = fn;
+      currentContact!.lastName = ln;
+      currentContact!.number = pNumber;
+      currentContact!.imgPath = imgPath;
       swapScreens = !swapScreens;
     });
   }
@@ -41,9 +51,11 @@ class _ContactsState extends State<Contacts> {
                   style: TextStyle(fontSize: 20),
                 ),
               ),
+              if (swapScreens) TextField(),
               TextButton(
                 onPressed: () {
                   setState(() {
+                    currentContact = null;
                     swapScreens = !swapScreens;
                   });
                 },
@@ -62,14 +74,22 @@ class _ContactsState extends State<Contacts> {
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
                   title: Text(contacts[index].fullname),
-                  onTap: () => print(contacts[index].number),
+                  onTap: () => setState(() {
+                    currentContact = contacts[index];
+                    swapScreens = !swapScreens;
+                  }),
                 );
               },
               separatorBuilder: (BuildContext context, int index) {
                 return const Divider();
               },
             ),
-            if (swapScreens) NextScreen(onSubmitted: changeS),
+            if (swapScreens)
+              NextScreen(
+                onSubmitted:
+                    currentContact == null ? createContact : editContact,
+                contact: currentContact,
+              )
           ],
         ),
       ),
@@ -78,10 +98,10 @@ class _ContactsState extends State<Contacts> {
 }
 
 class Contact {
-  final String? imgPath;
-  final String firstName;
-  final String lastName;
-  final String number;
+  String? imgPath;
+  String firstName;
+  String lastName;
+  String number;
 
   Contact(this.firstName, this.lastName, this.number, {this.imgPath});
 

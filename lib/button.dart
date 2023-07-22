@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class ProfileImage extends StatelessWidget {
   final void Function() pick;
-  final Uint8List? bytes;
+  final Future<Uint8List>? bytes;
 
   const ProfileImage({super.key, required this.pick, this.bytes});
 
@@ -22,9 +22,17 @@ class ProfileImage extends StatelessWidget {
                   Icons.account_circle,
                   size: 100,
                 )
-              : Image.memory(
-                  bytes!,
-                  fit: BoxFit.cover,
+              : FutureBuilder(
+                  future: bytes,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Image.memory(
+                        snapshot.data!,
+                        fit: BoxFit.cover,
+                      );
+                    }
+                    return const CircularProgressIndicator();
+                  },
                 ),
         ),
       ),
