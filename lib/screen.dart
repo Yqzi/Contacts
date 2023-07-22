@@ -55,102 +55,106 @@ class _NextScreenState extends State<NextScreen> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Column(
-        children: [
-          Container(
-            color: const Color.fromARGB(255, 238, 236, 236),
-            height: MediaQuery.of(context).size.height / 3 - 56,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            widget.onSubmitted(
-                              fnc.text,
-                              lnc.text,
-                              numC.text,
-                              imgPath: imagePath,
-                            );
-                          }
-                        },
-                        child: const Text('done')),
-                    Text('New Contact'),
-                    TextButton(onPressed: null, child: Text('cancel'))
-                  ],
-                ),
-                ProfileImage(pick: imagePicker, bytes: imageBytes),
-                TextButton(onPressed: imagePicker, child: Text('Add Photo')),
-              ],
-            ),
-          ),
-          Container(
-            color: const Color.fromARGB(255, 238, 236, 236),
-            height: MediaQuery.of(context).size.height * 2 / 3,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
-                  color: Colors.white,
-                  child: Column(
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          children: [
+            Container(
+              color: const Color.fromARGB(255, 238, 236, 236),
+              height: MediaQuery.of(context).size.height / 3 - 56,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextFormField(
-                        validator: (value) {
-                          if (value == null ||
-                              value.toString().trim().isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        controller: fnc,
-                        textAlign: TextAlign.left,
-                        decoration: const InputDecoration(
-                            hintText: 'First Name',
-                            contentPadding: EdgeInsets.all(15.0)),
-                      ),
-                      TextField(
-                        controller: lnc,
-                        textAlign: TextAlign.left,
-                        decoration: const InputDecoration(
-                            hintText: 'Last Name',
-                            contentPadding: EdgeInsets.all(15.0)),
-                      ),
+                      TextButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              widget.onSubmitted(
+                                fnc.text,
+                                lnc.text,
+                                numC.text,
+                                imgPath: imagePath,
+                              );
+                            }
+                          },
+                          child: const Text('done')),
+                      Text('New Contact'),
+                      TextButton(onPressed: null, child: Text('cancel'))
                     ],
                   ),
-                ),
-                Container(
-                  color: Colors.white,
-                  child: TextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some number';
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                      LengthLimitingTextInputFormatter(10),
-                    ],
-                    controller: numC,
-                    onFieldSubmitted: (num) {
-                      num =
-                          '${num.substring(0, 3)}-${num.substring(3, 6)}-${num.substring(6, 10)}';
-                      numC.text = num;
-                    },
-                    textAlign: TextAlign.left,
-                    decoration: const InputDecoration(
-                        labelText: 'Phone #',
-                        contentPadding: EdgeInsets.all(15.0)),
-                  ),
-                ),
-              ],
+                  ProfileImage(pick: imagePicker, bytes: imageBytes),
+                  TextButton(onPressed: imagePicker, child: Text('Add Photo')),
+                ],
+              ),
             ),
-          ),
-        ],
+            Container(
+              color: const Color.fromARGB(255, 238, 236, 236),
+              height: MediaQuery.of(context).size.height * 2 / 3,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Container(
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          validator: (value) {
+                            if (value == null ||
+                                value.toString().trim().isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                          controller: fnc,
+                          textAlign: TextAlign.left,
+                          decoration: const InputDecoration(
+                              hintText: 'First Name',
+                              contentPadding: EdgeInsets.all(15.0)),
+                        ),
+                        TextField(
+                          controller: lnc,
+                          textAlign: TextAlign.left,
+                          decoration: const InputDecoration(
+                              hintText: 'Last Name',
+                              contentPadding: EdgeInsets.all(15.0)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    color: Colors.white,
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some number';
+                        }
+                        if (value.length != 10) return "not enough number";
+                        return null;
+                      },
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                        LengthLimitingTextInputFormatter(10),
+                      ],
+                      controller: numC,
+                      onFieldSubmitted: (num) {
+                        num =
+                            '${num.substring(0, 3)}-${num.substring(3, 6)}-${num.substring(6, 10)}';
+                        numC.text = num;
+                      },
+                      textAlign: TextAlign.left,
+                      decoration: const InputDecoration(
+                          labelText: 'Phone #',
+                          contentPadding: EdgeInsets.all(15.0)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

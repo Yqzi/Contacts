@@ -20,15 +20,15 @@ class _ContactsState extends State<Contacts> {
 
   void createContact(String fn, String ln, String pNumber, {String? imgPath}) {
     setState(() {
-      contacts.add(Contact(fn, ln, pNumber, imgPath: imgPath));
+      contacts.add(Contact(fn.trim(), ln.trim(), pNumber, imgPath: imgPath));
       swapScreens = !swapScreens;
     });
   }
 
   void editContact(String fn, String ln, String pNumber, {String? imgPath}) {
     setState(() {
-      currentContact!.firstName = fn;
-      currentContact!.lastName = ln;
+      currentContact!.firstName = fn.trim();
+      currentContact!.lastName = ln.trim();
       currentContact!.number = pNumber;
       currentContact!.imgPath = imgPath;
       swapScreens = !swapScreens;
@@ -51,7 +51,15 @@ class _ContactsState extends State<Contacts> {
                   style: TextStyle(fontSize: 20),
                 ),
               ),
-              if (swapScreens) TextField(),
+              if (swapScreens == false)
+                const SizedBox(
+                  width: 500,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Search",
+                    ),
+                  ),
+                ),
               TextButton(
                 onPressed: () {
                   setState(() {
