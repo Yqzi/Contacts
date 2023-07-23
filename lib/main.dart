@@ -13,10 +13,43 @@ class Contacts extends StatefulWidget {
 }
 
 class _ContactsState extends State<Contacts> {
+  final TextEditingController _searchController = TextEditingController();
   bool swapScreens = false;
 
   List<Contact> contacts = [];
+  List<Contact> _filteredContacts = [];
+  bool _isLoading = false;
   Contact? currentContact;
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredContacts = contacts;
+    _searchController.addListener(_performSearch);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _performSearch() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    setState(() {
+      _filteredContacts = contacts
+          .where((element) => element.fullname
+              .toLowerCase()
+              .contains(_searchController.text.toLowerCase()))
+          .toList();
+      _isLoading = false;
+    });
+  }
 
   void createContact(String fn, String ln, String pNumber, {String? imgPath}) {
     setState(() {
@@ -52,12 +85,16 @@ class _ContactsState extends State<Contacts> {
                 ),
               ),
               if (swapScreens == false)
-                const SizedBox(
+                SizedBox(
                   width: 500,
                   child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Search",
-                    ),
+                    controller: _searchController,
+                    style: const TextStyle(color: Colors.black),
+                    cursorColor: Colors.black,
+                    decoration: const InputDecoration(
+                        hintText: 'Search',
+                        hintStyle: TextStyle(color: Colors.black),
+                        border: InputBorder.none),
                   ),
                 ),
               TextButton(
@@ -77,21 +114,27 @@ class _ContactsState extends State<Contacts> {
         ),
         body: Stack(
           children: [
-            ListView.separated(
-              itemCount: contacts.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Text(contacts[index].fullname),
-                  onTap: () => setState(() {
-                    currentContact = contacts[index];
-                    swapScreens = !swapScreens;
-                  }),
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return const Divider();
-              },
-            ),
+            _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  )
+                : ListView.separated(
+                    itemCount: _filteredContacts.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        title: Text(_filteredContacts[index].fullname),
+                        onTap: () => setState(() {
+                          currentContact = contacts[index];
+                          swapScreens = !swapScreens;
+                        }),
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const Divider();
+                    },
+                  ),
             if (swapScreens)
               NextScreen(
                 onSubmitted:
