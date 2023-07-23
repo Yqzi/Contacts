@@ -30,6 +30,7 @@ class _ContactsState extends State<Contacts> {
 
   @override
   void dispose() {
+    _searchController.removeListener(_performSearch);
     _searchController.dispose();
     super.dispose();
   }
@@ -38,8 +39,6 @@ class _ContactsState extends State<Contacts> {
     setState(() {
       _isLoading = true;
     });
-
-    await Future.delayed(const Duration(milliseconds: 500));
 
     setState(() {
       _filteredContacts = contacts
@@ -53,19 +52,28 @@ class _ContactsState extends State<Contacts> {
 
   void createContact(String fn, String ln, String pNumber, {String? imgPath}) {
     setState(() {
+      _filteredContacts = contacts;
+      _searchController.text = '';
       contacts.add(Contact(fn.trim(), ln.trim(), pNumber, imgPath: imgPath));
+      contacts.sort((c1, c2) => c1.fullname.compareTo(c2.fullname));
       swapScreens = !swapScreens;
     });
+
+    _performSearch();
   }
 
   void editContact(String fn, String ln, String pNumber, {String? imgPath}) {
     setState(() {
+      _filteredContacts = contacts;
+      _searchController.text = '';
       currentContact!.firstName = fn.trim();
       currentContact!.lastName = ln.trim();
       currentContact!.number = pNumber;
       currentContact!.imgPath = imgPath;
       swapScreens = !swapScreens;
     });
+
+    _performSearch();
   }
 
   @override
@@ -126,7 +134,7 @@ class _ContactsState extends State<Contacts> {
                       return ListTile(
                         title: Text(_filteredContacts[index].fullname),
                         onTap: () => setState(() {
-                          currentContact = contacts[index];
+                          currentContact = _filteredContacts[index];
                           swapScreens = !swapScreens;
                         }),
                       );

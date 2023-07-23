@@ -130,7 +130,7 @@ class _NextScreenState extends State<NextScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter some number';
                         }
-                        if (value.length != 10) return "not enough number";
+                        if (value.length < 10) return "not enough number";
                         return null;
                       },
                       keyboardType: TextInputType.number,
