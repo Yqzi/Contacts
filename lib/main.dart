@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const Contacts());
@@ -165,4 +168,50 @@ class Contact {
   Contact(this.firstName, this.lastName, this.number, {this.imgPath});
 
   String get fullname => "$firstName $lastName";
+
+  void saveAsJson(contact) {
+    Map<String, Object?> convertedData = {};
+
+    convertedData['firstName'] = firstName;
+    convertedData['lastname'] = lastName;
+    convertedData['number'] = number;
+    convertedData['imagePath'] = imgPath;
+
+    String formattedData = json.encode(convertedData);
+
+    StoreData.instance.saveString(fullname, formattedData);
+  }
+}
+
+class StoreData {
+  StoreData._privateConstructer();
+
+  static final StoreData instance = StoreData._privateConstructer();
+
+  Future<void> saveString(String key, String value) async {
+    try {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      final encodedValue = base64.encode(utf8.encode(value));
+
+      pref.setString(key, encodedValue);
+    } catch (e) {
+      print("saveString ${e.toString()}");
+    }
+  }
+
+  Future<String> getString(String key) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final value = pref.getString(key) ?? '';
+
+    if (value!.isNotEmpty) {
+      final decodedValue = utf8.decode(base64.decode(value));
+      return decodedValue.toString();
+    }
+    return '';
+  }
+
+  Future<bool> remove(String key) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.remove(key);
+  }
 }
