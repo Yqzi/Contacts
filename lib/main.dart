@@ -1,8 +1,10 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'constance.dart';
 
 void main() {
   runApp(const Contacts());
@@ -38,6 +40,19 @@ class _ContactsState extends State<Contacts> {
     super.dispose();
   }
 
+  void saveCotacts() async {
+    Lmso formedData = [];
+    Map<String, Lmso> formattedData = {};
+    for (Contact contact in contacts) {
+      formedData.add(contact.convertToJson());
+    }
+    formattedData[listName] = formedData;
+    final directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
+    print('$path/$fileName');
+    await File('$path/$fileName').writeAsString(json.encode(formattedData));
+  }
+
   Future<void> _performSearch() async {
     setState(() {
       _isLoading = true;
@@ -63,6 +78,8 @@ class _ContactsState extends State<Contacts> {
     });
 
     _performSearch();
+
+    saveCotacts();
   }
 
   void editContact(String fn, String ln, String pNumber, {String? imgPath}) {
@@ -77,6 +94,8 @@ class _ContactsState extends State<Contacts> {
     });
 
     _performSearch();
+
+    saveCotacts();
   }
 
   @override
@@ -169,7 +188,7 @@ class Contact {
 
   String get fullname => "$firstName $lastName";
 
-  void saveAsJson(contact) {
+  Map<String, Object?> convertToJson() {
     Map<String, Object?> convertedData = {};
 
     convertedData['firstName'] = firstName;
@@ -177,41 +196,8 @@ class Contact {
     convertedData['number'] = number;
     convertedData['imagePath'] = imgPath;
 
-    String formattedData = json.encode(convertedData);
-
-    StoreData.instance.saveString(fullname, formattedData);
+    return convertedData;
   }
 }
 
-class StoreData {
-  StoreData._privateConstructer();
-
-  static final StoreData instance = StoreData._privateConstructer();
-
-  Future<void> saveString(String key, String value) async {
-    try {
-      SharedPreferences pref = await SharedPreferences.getInstance();
-      final encodedValue = base64.encode(utf8.encode(value));
-
-      pref.setString(key, encodedValue);
-    } catch (e) {
-      print("saveString ${e.toString()}");
-    }
-  }
-
-  Future<String> getString(String key) async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    final value = pref.getString(key) ?? '';
-
-    if (value!.isNotEmpty) {
-      final decodedValue = utf8.decode(base64.decode(value));
-      return decodedValue.toString();
-    }
-    return '';
-  }
-
-  Future<bool> remove(String key) async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.remove(key);
-  }
-}
+typedef Lmso = List<Map<String, Object?>>;

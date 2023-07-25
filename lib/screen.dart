@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:contacts/button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NextScreen extends StatefulWidget {
   final void Function(String, String, String, {String? imgPath}) onSubmitted;
