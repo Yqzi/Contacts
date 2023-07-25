@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'constance.dart';
 
 void main() {
@@ -31,6 +30,24 @@ class _ContactsState extends State<Contacts> {
     super.initState();
     _filteredContacts = contacts;
     _searchController.addListener(_performSearch);
+
+    init();
+  }
+
+  void init() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
+    List contactData =
+        json.decode(await File('$path/$fileName').readAsString())["list"];
+    print(contactData);
+    for (var data in contactData) {
+      print(data['lastname']);
+      Contact contact = Contact(
+          data["firstName"], data['lastname'] ?? '', data['number'],
+          imgPath: data['imagePath']);
+      contacts.add(contact);
+    }
+    _performSearch();
   }
 
   @override
@@ -96,6 +113,10 @@ class _ContactsState extends State<Contacts> {
     _performSearch();
 
     saveCotacts();
+  }
+
+  void deleteContact() {
+    contacts.remove(currentContact);
   }
 
   @override
@@ -170,6 +191,7 @@ class _ContactsState extends State<Contacts> {
                 onSubmitted:
                     currentContact == null ? createContact : editContact,
                 contact: currentContact,
+                deleteContact: deleteContact,
               )
           ],
         ),

@@ -7,8 +7,13 @@ import 'package:contacts/button.dart';
 
 class NextScreen extends StatefulWidget {
   final void Function(String, String, String, {String? imgPath}) onSubmitted;
+  final void Function() deleteContact;
   final Contact? contact;
-  const NextScreen({super.key, required this.onSubmitted, this.contact});
+  const NextScreen(
+      {super.key,
+      required this.onSubmitted,
+      this.contact,
+      required this.deleteContact});
 
   @override
   State<NextScreen> createState() => _NextScreenState();
@@ -149,6 +154,15 @@ class _NextScreenState extends State<NextScreen> {
                           contentPadding: EdgeInsets.all(15.0)),
                     ),
                   ),
+                  SizedBox(
+                      width: 150,
+                      child: TextButton(
+                        onPressed: widget.deleteContact,
+                        child: const Text(
+                          'DELETE CONTACT',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      )),
                 ],
               ),
             ),
