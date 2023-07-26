@@ -31,23 +31,25 @@ class _ContactsState extends State<Contacts> {
     _filteredContacts = contacts;
     _searchController.addListener(_performSearch);
 
-    init();
+    loadContact();
   }
 
-  void init() async {
+  void loadContact() async {
     final directory = await getApplicationDocumentsDirectory();
     final path = directory.path;
     List contactData =
         json.decode(await File('$path/$fileName').readAsString())["list"];
     print(contactData);
-    for (var data in contactData) {
+    contactData.forEach((data) {
       print(data['lastname']);
       Contact contact = Contact(
-          data["firstName"], data['lastname'] ?? '', data['number'],
-          imgPath: data['imagePath']);
+        data["firstName"],
+        data['lastname'] ?? '',
+        data['number'],
+        imgPath: data['imagePath'],
+      );
       contacts.add(contact);
-    }
-    _performSearch();
+    });
   }
 
   @override
